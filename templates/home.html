@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+  <h3 class="page-title">Welcome to the To-Do List Application!</h3>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="task-form">
+      <input type="text" name="task" class="task-input" placeholder="Enter a new task" required>
+      <button type="submit" class="task-button">Add Task</button>
+    </div>
+  </form>
+
+  <ul class="task-list">
+    {% for task in tasks %}
+  <li class="task-item {% if task.completed %}completed{% endif %}">
+    <span>{{ task.description }}</span>
+    <div class="task-actions">
+
+      {% if task.completed %}
+        <form action="{% url 'close_task' task.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="open-button">Close</button>
+        </form>
+      {% else %}
+        <form action="{% url 'open_task' task.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="open-button">Open</button>
+        </form>
+      {% endif %}
+
+      <form method="post" action="{% url 'delete_task' task.id %}">
+        {% csrf_token %}
+        <button type="submit" class="delete-button">Delete</button>
+      </form>
+    </div>
+  </li>
+{% endfor %}
+
+  </ul>
+{% endblock %}
